@@ -44,8 +44,9 @@ namespace swri_transform_util
   {
     transformers_.clear();
     std::vector<std::shared_ptr<Transformer> > transformers;
-    transformers.push_back(std::make_shared<Wgs84Transformer>(nullptr));
-    transformers.push_back(std::make_shared<UtmTransformer>(nullptr));
+    local_xy_util_ = std::make_shared<LocalXyWgs84Util>(node_);
+    transformers.push_back(std::make_shared<Wgs84Transformer>(local_xy_util_));
+    transformers.push_back(std::make_shared<UtmTransformer>(local_xy_util_));
 
     for (const auto& transformer : transformers)
     {
@@ -71,8 +72,6 @@ namespace swri_transform_util
   void TransformManager::Initialize(std::shared_ptr<tf2_ros::Buffer> tf_buffer)
   {
     tf_buffer_ = tf_buffer;
-
-    local_xy_util_ = std::make_shared<LocalXyWgs84Util>(node_);
 
     std::map<std::string, std::map<std::string, std::shared_ptr<Transformer> > >::iterator iter1;
     for (iter1 = transformers_.begin(); iter1 != transformers_.end(); ++iter1)
